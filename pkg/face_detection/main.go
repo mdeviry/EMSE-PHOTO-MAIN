@@ -20,8 +20,8 @@ func connectMariaDB() (*gorm.DB, error) {
 	return gorm.Open(mysql.Open(dsn), &gorm.Config{})
 }
 
-// Analyse les photos dans un répertoire
-func analyzePhotos(db *gorm.DB, folderPath string) ([]map[string]interface{}, error) {
+// Analyse les photos dans un répertoire et met à jour la base de données
+func analyzePhotosAndSaveToDB(db *gorm.DB, folderPath string) ([]map[string]interface{}, error) {
 	// Liste pour stocker les résultats
 	results := []map[string]interface{}{}
 
@@ -53,6 +53,19 @@ func analyzePhotos(db *gorm.DB, folderPath string) ([]map[string]interface{}, er
 		if err != nil {
 			log.Printf("Erreur lors de la détection sur %s : %v", filePath, err)
 			continue
+		}
+
+		// Associez les visages détectés à la photo dans la base de données
+		for _, face := range media.MediaURL {
+			recognizedUser := models.RecognizedUser{
+				PhotoID: media.ID,
+				UserID:  0, // À remplir si vous avez une logique d'identification de l'utilisateur
+			}
+			err := db.Create(&recognizedUser).Error
+			if err != nil {
+				log.Printf("Erreur lors de l'association du visage à la photo %s : %v", filePath, err)
+				continue
+			}
 		}
 
 		// Enregistrez les résultats
@@ -93,8 +106,8 @@ func main() {
 		log.Fatalf("Le dossier %s n'existe pas", folderPath)
 	}
 
-	// Analysez les photos dans le dossier
-	results, err := analyzePhotos(db, folderPath)
+	// Analysez les photos dans le dossier et mettez à jour la base de données
+	results, err := analyzePhotosAndSaveToDB(db, folderPath)
 	if err != nil {
 		log.Fatalf("Erreur d'analyse des photos : %v", err)
 	}
