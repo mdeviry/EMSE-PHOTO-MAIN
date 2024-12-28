@@ -27,3 +27,15 @@ type FaceGroup struct {
     Label      *string
     ImageFaces []ImageFace
 }
+
+type Photo struct {
+	PhotoID     uint   `gorm:"primaryKey"`
+	PathToPhoto string `gorm:"not null"`
+	EventID     uint
+}
+
+type RecognizedUser struct {
+	RecognizedUserID uint `gorm:"primaryKey"`
+	UserID           uint
+	PhotoID          uint
+}
