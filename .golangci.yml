@@ -1,0 +1,15 @@
+linters:
+  disable-all: true
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - bidichk
+    - bodyclose
+    - containedctx
+    - contextcheck
+    - errname
+    - gofmt
+    - gosec
+    - misspell

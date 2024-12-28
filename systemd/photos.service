@@ -1,0 +1,14 @@
+[Unit]
+Description=Go Photos Service with Inotify Watcher
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=/path/to/the/directory/lesroots2024
+ExecStart=/path/to/the/directory/lesroots2024/scripts/watch_and_restart.sh
+Restart=always
+RestartSec=5
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+[Install]
+WantedBy=multi-user.target
